@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuNLaK Networkz - Attendance Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .header {
+            background-color: #6c5ce7;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .report-container {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .filters select, .filters input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .present {
+            background-color: #d4edda;
+        }
+        .absent {
+            background-color: #f8d7da;
+        }
+        .late {
+            background-color: #fff3cd;
+        }
+        .half-day {
+            background-color: #d1ecf1;
+        }
+        .metrics {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .metric-card {
+            flex: 1;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .export-btn {
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .calendar-header {
+            background-color: #f2f2f2;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+        }
+        .calendar-day {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Employee Attendance Report</h1>
+        <p>RuNLaK Networkz HRMS</p>
+    </div>
+    
+    <div class="report-container">
+        <div class="filters">
+            <select id="departmentFilter">
+                <option value="">All Departments</option>
+                <option value="technical">Technical</option>
+                <option value="non-technical">Non-Technical</option>
+                <option value="student">Student</option>
+            </select>
+            
+            <select id="periodFilter">
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+            
+            <input type="date" id="startDate">
+            <input type="date" id="endDate">
+            
+            <button onclick="generateReport()">Generate Report</button>
+        </div>
+        
+        <div class="metrics">
+            <div class="metric-card">
+                <h3>Average Attendance Rate</h3>
+                <div class="metric-value">92%</div>
+            </div>
+            <div class="metric-card">
+                <h3>Late Arrivals</h3>
+                <div class="metric-value">7</div>
+            </div>
+            <div class="metric-card">
+                <h3>Absent Days</h3>
+                <div class="metric-value">12</div>
+            </div>
+            <div class="metric-card">
+                <h3>Leave Utilization</h3>
+                <div class="metric-value">45%</div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h3>Attendance Trends</h3>
+            <p>Chart visualization would go here</p>
+        </div>
+
+        <h3>Monthly Attendance Summary</h3>
+        <table id="attendanceTable">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Present Days</th>
+                    <th>Absent Days</th>
+                    <th>Late Arrivals</th>
+                    <th>Early Departures</th>
+                    <th>Half Days</th>
+                    <th>Leaves Taken</th>
+                    <th>Attendance Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>John Doe</td>
+                    <td>Engineering</td>
+                    <td>18</td>
+                    <td>0</td>
+                    <td>2</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>3</td>
+                    <td class="present">100%</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Jane Smith</td>
+                    <td>IT</td>
+                    <td>20</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td class="present">100%</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Michael Chen</td>
+                    <td>Design</td>
+                    <td>15</td>
+                    <td>3</td>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>3</td>
+                    <td class="late">83%</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Sarah Johnson</td>
+                    <td>HR</td>
+                    <td>14</td>
+                    <td>5</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td class="absent">74%</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Robert Williams</td>
+                    <td>Finance</td>
+                    <td>18</td>
+                    <td>2</td>
+                    <td>4</td>
+                    <td>3</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td class="late">90%</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Emily Davis</td>
+                    <td>Marketing</td>
+                    <td>21</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td class="present">100%</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Alex Thompson</td>
+                    <td>Engineering</td>
+                    <td>16</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>3</td>
+                    <td>0</td>
+                    <td class="half-day">89%</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Olivia Martinez</td>
+                    <td>Data Analytics</td>
+                    <td>19</td>
+                    <td>0</td>
+                    <td>3</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td class="present">100%</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Daniel Lee</td>
+                    <td>Student</td>
+                    <td>14</td>
+                    <td>6</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td class="absent">70%</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Daily Attendance Calendar</h3>
+        <div class="calendar">
+            <div class="calendar-header">Sun</div>
+            <div class="calendar-header">Mon</div>
+            <div class="calendar-header">Tue</div>
+            <div class="calendar-header">Wed</div>
+            <div class="calendar-header">Thu</div>
+            <div class="calendar-header">Fri</div>
+            <div class="calendar-header">Sat</div>
+            
+            <!-- Sample calendar days - would be generated dynamically -->
+            <div class="calendar-day"></div>
+            <div class="calendar-day">1</div>
+            <div class="calendar-day present">2</div>
+            <div class="calendar-day present">3</div>
+            <div class="calendar-day present">4</div>
+            <div class="calendar-day present">5</div>
+            <div class="calendar-day"></div>
+            
+            <div class="calendar-day"></div>
+            <div class="calendar-day present">6</div>
+            <div class="calendar-day absent">7</div>
+            <div class="calendar-day present">8</div>
+            <div class="calendar-day present">9</div>
+            <div class="calendar-day late">10</div>
+            <div class="calendar-day"></div>
+            
+            <div class="calendar-day"></div>
+            <div class="calendar-day present">13</div>
+            <div class="calendar-day present">14</div>
+            <div class="calendar-day half-day">15</div>
+            <div class="calendar-day present">16</div>
+            <div class="calendar-day present">17</div>
+            <div class="calendar-day"></div>
+            
+            <div class="calendar-day"></div>
+            <div class="calendar-day present">20</div>
+            <div class="calendar-day present">21</div>
+            <div class="calendar-day late">22</div>
+            <div class="calendar-day present">23</div>
+            <div class="calendar-day present">24</div>
+            <div class="calendar-day"></div>
+            
+            <div class="calendar-day"></div>
+            <div class="calendar-day present">27</div>
+            <div class="calendar-day present">28</div>
+            <div class="calendar-day present">29</div>
+            <div class="calendar-day present">30</div>
+            <div class="calendar-day present">31</div>
+            <div class="calendar-day"></div>
+        </div>
+        
+        <button class="export-btn" onclick="exportReport()">Export to Excel</button>
+    </div>
+    
+    <script>
+        function generateReport() {
+            // Functionality to generate the report based on filters
+            alert("Report generated with selected filters!");
+        }
+        
+        function exportReport() {
+            // Functionality to export the report to Excel
+            alert("Report exported to Excel!");
+        }
+    </script>
+</body>
+</html>
